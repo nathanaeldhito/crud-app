@@ -1,26 +1,37 @@
-version: '3.8'
-
+version: '3'
 services:
-  web:
-    build: ./php         # Ganti dari image: ke build:
-    container_name: crud-php
-    volumes:
-      - ./php:/var/www/html
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
-
+  # MySQL Service
   db:
     image: mysql:8.0
-    container_name: crud-mysql
+    container_name: mysql_db
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: crud
     volumes:
-      - mysql-data:/var/lib/mysql
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql-data:/var/lib/mysql
+      - ./db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: crud_db
+      MYSQL_USER: cruduser
+      MYSQL_PASSWORD: crudpassword
+    ports:
+      - "3306:3306"
+    networks:
+      - crud-network
 
-volumes:
-  mysql-data:
+  # PHP Service
+  web:
+    build: ./php
+    container_name: php_web
+    restart: always
+    volumes:
+      - ./www:/var/www/html
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    networks:
+      - crud-network
+
+networks:
+  crud-network:
+    driver: bridge
