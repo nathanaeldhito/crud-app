@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    build: ./php  # GANTI image: dengan build: agar bisa build Dockerfile kustom
+    image: php:8.1-apache
     container_name: crud-php
     volumes:
       - ./php:/var/www/html
