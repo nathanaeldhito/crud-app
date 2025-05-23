@@ -1,37 +1,26 @@
-version: '3'
+version: '3.8'
 services:
-  # MySQL Service
-  db:
-    image: mysql:8.0
-    container_name: mysql_db
-    restart: always
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-      - ./db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: crud_db
-      MYSQL_USER: cruduser
-      MYSQL_PASSWORD: crudpassword
-    ports:
-      - "3306:3306"
-    networks:
-      - crud-network
-
-  # PHP Service
   web:
-    build: ./php
-    container_name: php_web
-    restart: always
-    volumes:
-      - ./www:/var/www/html
+    image: php:8.2-apache
+    container_name: crud-web
     ports:
-      - "80:80"
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
     depends_on:
       - db
-    networks:
-      - crud-network
 
-networks:
-  crud-network:
-    driver: bridge
+  db:
+    image: mysql:5.7
+    container_name: crud-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: bookdb
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./src/db.sql:/docker-entrypoint-initdb.d/db.sql
+
+volumes:
+  db_data:

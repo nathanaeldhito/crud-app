@@ -1,14 +1,11 @@
 <?php
-$host = 'db'; // Nama container database
-$user = 'cruduser';
-$pass = 'crudpassword';
-$dbname = 'crud_db';
+$host = 'db';
+$user = 'root';
+$pass = 'password';
+$dbname = 'bookdb';
 
-// Buat koneksi
-$conn = mysqli_connect($host, $user, $pass, $dbname);
-
-// Cek koneksi
-if (!$conn) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+$conn = new mysqli($host, $user, $pass, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>
